@@ -4,55 +4,43 @@
   </div>
 
   <div class="col-md-9">
-    <h1 class="display-4"><span>Welcome, Java Hipster!</span> (Bankx)</h1>
-
-    <p class="lead">This is your homepage</p>
-
-    <div>
-      @if (account !== null) {
+    @if (account !== null) {
+      <div>
         <div class="alert alert-success">
           @if (account) {
-            <span id="home-logged-message">You are logged in as user &quot;{{ account.login }}&quot;.</span>
+            <h1 class="display-4">
+              <span>Welcome, {{ account.login }}!</span> (Bankx)
+            </h1>
+            <span id="home-logged-message">You can perform the operations listed below</span>
+            <p class="lead">List Of Operations:</p>
           }
         </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span>If you want to </span>
-          <a class="alert-link" (click)="login()">sign in</a
-          ><span
-            >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-            (login=&quot;user&quot; and password=&quot;user&quot;).</span
+        @if (account) {
+          <button
+            id="jh-create-entity"
+            data-cy="entityCreateButton"
+            class="btn btn-primary jh-create-entity create-transaction-log"
+            [routerLink]="['/transaction-log/new']"
           >
-        </div>
-
-        <div class="alert alert-warning">
-          <span>You don&apos;t have an account yet?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register">Register a new account</a>
-        </div>
-      }
-    </div>
-
-    <p>If you have any question on JHipster:</p>
-
-    <ul>
-      <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">JHipster homepage</a></li>
-      <li>
-        <a href="https://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">JHipster on Stack Overflow</a>
-      </li>
-      <li>
-        <a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer"
-          >JHipster bug tracker</a
+            <fa-icon icon="plus"></fa-icon>
+            <span>Perform Transaction</span>
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="alert alert-warning">
+        <span>If you want to </span>
+        <a class="alert-link" (click)="login()">sign in</a
+        ><span
+          >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
+          (login=&quot;user&quot; and password=&quot;user&quot;).</span
         >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">JHipster public chat room</a>
-      </li>
-      <li><a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">follow &#64;jhipster on Twitter</a></li>
-    </ul>
+      </div>
 
-    <p>
-      <span>If you like JHipster, don&apos;t forget to give us a star on</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">GitHub</a>!
-    </p>
+      <div class="alert alert-warning">
+        <span>You don&apos;t have an account yet?</span>&nbsp;
+        <a class="alert-link" routerLink="/account/register">Register a new account</a>
+      </div>
+    }
   </div>
 </div>

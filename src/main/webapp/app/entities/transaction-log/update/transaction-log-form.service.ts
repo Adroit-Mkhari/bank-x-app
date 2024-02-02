@@ -70,7 +70,7 @@ export class TransactionLogFormService {
         validators: [Validators.required],
       }),
       status: new FormControl(transactionLogRawValue.status, {
-        validators: [Validators.required],
+        validators: [],
       }),
     });
   }
