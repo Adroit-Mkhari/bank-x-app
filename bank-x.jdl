@@ -1,5 +1,6 @@
 entity ProfileInfo {
 	@Id profileNumber String pattern(/^[A-Z]{6}\s\d{3}$/)
+    userId Long required
 }
 
 entity ClientInfo {
@@ -42,12 +43,12 @@ entity BankInfo {
 }
 
 enum TransactionStatus {
-    PENDING, SUCCESSFUL, FAILED, CENCELLED
+    PENDING, SUCCESSFUL, FAILED, CANCELED
 }
 
 entity TransactionLog {
+    transactionTime Instant required
 	@Id uniqueTransactionId UUID
-	transactionTime Instant required
 	debtorAccount String required pattern(/^\d{10,15}$/)
 	creditorAccount String required pattern(/^\d{10,15}$/)
     amount BigDecimal required
