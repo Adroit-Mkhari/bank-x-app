@@ -60,6 +60,16 @@ public class AccountResource {
         if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
+        System.out.println("Id Number hi leyi: " + managedUserVM.getIdNumber());
+        System.out.println("Phone Email hi leyi: " + managedUserVM.getEmail());
+        System.out.println("firstName hi leyi: " + managedUserVM.getFirstName());
+        System.out.println("lastName hi leyi: " + managedUserVM.getLastName());
+        System.out.println("streetAddress hi leyi: " + managedUserVM.getStreetAddress());
+        System.out.println("postalCode hi leyi: " + managedUserVM.getPostalCode());
+        System.out.println("city hi leyi: " + managedUserVM.getCity());
+        System.out.println("stateProvince hi leyi: " + managedUserVM.getStateProvince());
+        System.out.println("phoneNumber hi leyi: " + managedUserVM.getPhoneNumber());
+        System.out.println("password hi leyi: " + managedUserVM.getPassword());
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
         mailService.sendActivationEmail(user);
     }

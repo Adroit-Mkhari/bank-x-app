@@ -38,6 +38,38 @@ export default class RegisterComponent implements AfterViewInit {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email],
     }),
+    idNumber: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    firstName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    lastName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    streetAddress: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    postalCode: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    city: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    stateProvince: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
+    phoneNumber: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+    }),
     password: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(4), Validators.maxLength(50)],
@@ -66,9 +98,23 @@ export default class RegisterComponent implements AfterViewInit {
     if (password !== confirmPassword) {
       this.doNotMatch = true;
     } else {
-      const { login, email } = this.registerForm.getRawValue();
+      const { login, email, idNumber, firstName, lastName, streetAddress, postalCode, city, stateProvince, phoneNumber } =
+        this.registerForm.getRawValue();
       this.registerService
-        .save({ login, email, password, langKey: 'en' })
+        .save({
+          login,
+          email,
+          idNumber,
+          firstName,
+          lastName,
+          streetAddress,
+          postalCode,
+          city,
+          stateProvince,
+          phoneNumber,
+          password,
+          langKey: 'en',
+        })
         .subscribe({ next: () => (this.success = true), error: response => this.processError(response) });
     }
   }
