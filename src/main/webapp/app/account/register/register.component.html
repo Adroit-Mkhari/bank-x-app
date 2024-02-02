@@ -97,9 +97,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">Id Number</label>
+            <label class="form-label" for="idNumber">Id Number</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="idNumber"
               name="idNumber"
@@ -108,21 +108,21 @@
               data-cy="idNumber"
             />
 
-            @if (registerForm.get('email')!.invalid && (registerForm.get('email')!.dirty || registerForm.get('email')!.touched)) {
+            @if (registerForm.get('idNumber')!.invalid && (registerForm.get('idNumber')!.dirty || registerForm.get('idNumber')!.touched)) {
               <div>
-                @if (registerForm.get('email')?.errors?.required) {
+                @if (registerForm.get('idNumber')?.errors?.required) {
                   <small class="form-text text-danger">Your Id Number is required.</small>
                 }
 
-                @if (registerForm.get('email')?.errors?.invalid) {
+                @if (registerForm.get('idNumber')?.errors?.invalid) {
                   <small class="form-text text-danger">Your Id Number is invalid.</small>
                 }
 
-                @if (registerForm.get('email')?.errors?.minlength) {
+                @if (registerForm.get('idNumber')?.errors?.minlength) {
                   <small class="form-text text-danger">Your Id Number is required to be exactly 13 characters.</small>
                 }
 
-                @if (registerForm.get('email')?.errors?.maxlength) {
+                @if (registerForm.get('idNumber')?.errors?.maxlength) {
                   <small class="form-text text-danger">Your Id Number is required to be exactly 13 characters.</small>
                 }
               </div>
@@ -130,9 +130,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">First Name</label>
+            <label class="form-label" for="firstName">First Name</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="firstName"
               name="firstName"
@@ -154,7 +154,7 @@
                 }
 
                 @if (registerForm.get('firstName')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your First Name is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your First Name is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('firstName')?.errors?.maxlength) {
@@ -165,9 +165,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">Last Name</label>
+            <label class="form-label" for="lastName">Last Name</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="lastName"
               name="lastName"
@@ -187,7 +187,7 @@
                 }
 
                 @if (registerForm.get('lastName')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your Last Name is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your Last Name is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('lastName')?.errors?.maxlength) {
@@ -198,9 +198,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">Street Address</label>
+            <label class="form-label" for="streetAddress">Street Address</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="streetAddress"
               name="streetAddress"
@@ -223,7 +223,7 @@
                 }
 
                 @if (registerForm.get('streetAddress')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your Street Address is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your Street Address is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('streetAddress')?.errors?.maxlength) {
@@ -234,9 +234,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">Postal Code</label>
+            <label class="form-label" for="postalCode">Postal Code</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="postalCode"
               name="postalCode"
@@ -258,7 +258,7 @@
                 }
 
                 @if (registerForm.get('postalCode')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your Postal Code is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your Postal Code is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('postalCode')?.errors?.maxlength) {
@@ -269,8 +269,8 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">City</label>
-            <input type="city" class="form-control" id="city" name="city" placeholder="Your City" formControlName="city" data-cy="city" />
+            <label class="form-label" for="city">City</label>
+            <input type="text" class="form-control" id="city" name="city" placeholder="Your City" formControlName="city" data-cy="city" />
 
             @if (registerForm.get('city')!.invalid && (registerForm.get('city')!.dirty || registerForm.get('city')!.touched)) {
               <div>
@@ -283,7 +283,7 @@
                 }
 
                 @if (registerForm.get('city')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your City is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your City is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('city')?.errors?.maxlength) {
@@ -294,9 +294,9 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">State Province</label>
+            <label class="form-label" for="stateProvince">State Province</label>
             <input
-              type="stateProvince"
+              type="text"
               class="form-control"
               id="stateProvince"
               name="stateProvince"
@@ -319,7 +319,7 @@
                 }
 
                 @if (registerForm.get('stateProvince')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your State Province is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your State Province is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('stateProvince')?.errors?.maxlength) {
@@ -330,12 +330,12 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="email">Phone Number</label>
+            <label class="form-label" for="phoneNumber">Phone Number</label>
             <input
-              type="phoneNumber"
+              type="text"
               class="form-control"
               id="phoneNumber"
-              name="stateProvince"
+              name="phoneNumber"
               placeholder="Your Phone Number"
               formControlName="phoneNumber"
               data-cy="phoneNumber"
@@ -355,7 +355,7 @@
                 }
 
                 @if (registerForm.get('phoneNumber')?.errors?.minlength) {
-                  <small class="form-text text-danger">Your Phone Number is required to be exactly 13 characters.</small>
+                  <small class="form-text text-danger">Your Phone Number is required to be at least 1 character.</small>
                 }
 
                 @if (registerForm.get('phoneNumber')?.errors?.maxlength) {

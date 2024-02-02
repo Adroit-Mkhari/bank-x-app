@@ -1,20 +1,27 @@
 package co.za.bankx.web.rest;
 
-import co.za.bankx.domain.User;
+import co.za.bankx.domain.*;
+import co.za.bankx.domain.enumeration.*;
 import co.za.bankx.repository.UserRepository;
 import co.za.bankx.security.SecurityUtils;
-import co.za.bankx.service.MailService;
-import co.za.bankx.service.UserService;
+import co.za.bankx.service.*;
 import co.za.bankx.service.dto.AdminUserDTO;
 import co.za.bankx.service.dto.PasswordChangeDTO;
 import co.za.bankx.web.rest.errors.*;
+import co.za.bankx.web.rest.errors.EmailAlreadyUsedException;
+import co.za.bankx.web.rest.errors.InvalidPasswordException;
 import co.za.bankx.web.rest.vm.KeyAndPasswordVM;
 import co.za.bankx.web.rest.vm.ManagedUserVM;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CharacterPredicates;
+import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +47,24 @@ public class AccountResource {
 
     private final MailService mailService;
 
+    @Autowired
+    private ProfileInfoService profileInfoService;
+
+    @Autowired
+    private ClientInfoService clientInfoService;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private AccountInfoService accountInfoService;
+
+    @Autowired
+    private TransactionLogService transactionLogService;
+
+    @Autowired
+    private SessionLogService sessionLogService;
+
     public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
         this.userRepository = userRepository;
         this.userService = userService;
@@ -60,18 +85,103 @@ public class AccountResource {
         if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        System.out.println("Id Number hi leyi: " + managedUserVM.getIdNumber());
-        System.out.println("Phone Email hi leyi: " + managedUserVM.getEmail());
-        System.out.println("firstName hi leyi: " + managedUserVM.getFirstName());
-        System.out.println("lastName hi leyi: " + managedUserVM.getLastName());
-        System.out.println("streetAddress hi leyi: " + managedUserVM.getStreetAddress());
-        System.out.println("postalCode hi leyi: " + managedUserVM.getPostalCode());
-        System.out.println("city hi leyi: " + managedUserVM.getCity());
-        System.out.println("stateProvince hi leyi: " + managedUserVM.getStateProvince());
-        System.out.println("phoneNumber hi leyi: " + managedUserVM.getPhoneNumber());
-        System.out.println("password hi leyi: " + managedUserVM.getPassword());
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
         mailService.sendActivationEmail(user);
+
+        String login = user.getLogin();
+        if (login != null && !user.isActivated()) {
+            ProfileInfo profileInfo = new ProfileInfo();
+            String profileNumber = generateRandomProfileNumber();
+
+            while (profileInfoService.findOne(profileNumber).isPresent()) {
+                profileNumber = generateRandomProfileNumber();
+            }
+
+            profileInfo.setProfileNumber(profileNumber); // TODO: Ensure that it matches pattern or regenerate
+            profileInfo.setUserId(user.getId());
+            profileInfo = profileInfoService.save(profileInfo);
+
+            Contact contact = new Contact();
+            contact.setEmail(managedUserVM.getEmail());
+            contact.setPhoneNumber(managedUserVM.getPhoneNumber());
+            contact.setStreetAddress(managedUserVM.getStreetAddress());
+            contact.setCity(managedUserVM.getCity());
+            contact.setStateProvince(managedUserVM.getStateProvince());
+            contact.setPostalCode(managedUserVM.getPostalCode());
+            contact = contactService.save(contact);
+
+            ClientInfo clientInfo = new ClientInfo();
+            clientInfo.setProfileInfo(profileInfo);
+            clientInfo.setFirstName(managedUserVM.getFirstName());
+            clientInfo.setLastName(managedUserVM.getLastName());
+            clientInfo.setIdNumber(managedUserVM.getIdNumber()); // TODO: Check if ID number already exists in db
+            clientInfo.setContact(contact);
+
+            clientInfoService.save(clientInfo);
+
+            AccountInfo savingsAccount = new AccountInfo();
+            savingsAccount.setProfileInfo(profileInfo);
+            savingsAccount.setAccountNumber(generateRandomAccountNumber(10));
+            savingsAccount.setAccountType(AccountType.SAVINGS);
+            savingsAccount.setAccountStatus(AccountStatus.ACTIVE);
+            savingsAccount.setAccountBalance(BigDecimal.valueOf(500.00));
+            savingsAccount = accountInfoService.save(savingsAccount);
+
+            TransactionLog transactionLogSavings = new TransactionLog();
+            transactionLogSavings.setDebtorAccount(savingsAccount.getAccountNumber());
+            transactionLogSavings.setCreditorAccount("100000000000007");
+            transactionLogSavings.setStatus(TransactionStatus.SUCCESSFUL);
+            transactionLogSavings.setTransactionTime(Instant.now());
+            transactionLogSavings.setAmount(BigDecimal.valueOf(500.00));
+            transactionLogSavings = transactionLogService.save(transactionLogSavings);
+
+            SessionLog sessionLogSavings = new SessionLog();
+            sessionLogSavings.setStatus(DebitCreditStatus.ACCEPTED);
+            sessionLogSavings.setTransactionLog(transactionLogSavings);
+            sessionLogSavings.setTransactionType(TransactionType.CREDIT);
+            sessionLogService.save(sessionLogSavings);
+
+            AccountInfo currentAccount = new AccountInfo();
+            currentAccount.setProfileInfo(profileInfo);
+            currentAccount.setAccountNumber(generateRandomAccountNumber(12));
+            currentAccount.setAccountType(AccountType.SAVINGS);
+            currentAccount.setAccountStatus(AccountStatus.ACTIVE);
+            currentAccount.setAccountBalance(BigDecimal.valueOf(00.00));
+            currentAccount = accountInfoService.save(currentAccount);
+
+            TransactionLog transactionLogCurrent = new TransactionLog();
+            transactionLogCurrent.setDebtorAccount(currentAccount.getAccountNumber());
+            transactionLogCurrent.setCreditorAccount("100000000000007");
+            transactionLogCurrent.setStatus(TransactionStatus.SUCCESSFUL);
+            transactionLogCurrent.setTransactionTime(Instant.now());
+            transactionLogCurrent.setAmount(BigDecimal.valueOf(00.00));
+            transactionLogCurrent = transactionLogService.save(transactionLogCurrent);
+
+            SessionLog sessionLogCurrent = new SessionLog();
+            sessionLogCurrent.setStatus(DebitCreditStatus.ACCEPTED);
+            sessionLogCurrent.setTransactionLog(transactionLogCurrent);
+            sessionLogCurrent.setTransactionType(TransactionType.CREDIT);
+            sessionLogService.save(sessionLogCurrent);
+        }
+    }
+
+    private static String generateRandomProfileNumber() {
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+            .withinRange('A', 'Z')
+            .filteredBy(CharacterPredicates.LETTERS)
+            .build();
+
+        RandomStringGenerator randomNumberStringGenerator = new RandomStringGenerator.Builder()
+            .withinRange('0', '9')
+            .filteredBy(CharacterPredicates.DIGITS)
+            .build();
+
+        String profileNumber = randomStringGenerator.generate(6) + " " + randomNumberStringGenerator.generate(3);
+        return profileNumber;
+    }
+
+    private static String generateRandomAccountNumber(int size) {
+        return new RandomStringGenerator.Builder().withinRange('0', '9').filteredBy(CharacterPredicates.DIGITS).build().generate(size);
     }
 
     /**

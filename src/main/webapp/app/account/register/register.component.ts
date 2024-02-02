@@ -36,7 +36,7 @@ export default class RegisterComponent implements AfterViewInit {
     }),
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(254), Validators.email],
     }),
     idNumber: new FormControl('', {
       nonNullable: true,
@@ -44,31 +44,31 @@ export default class RegisterComponent implements AfterViewInit {
     }),
     firstName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(2), Validators.maxLength(35)],
     }),
     lastName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(35)],
     }),
     streetAddress: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(35)],
     }),
     postalCode: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(4), Validators.maxLength(6)],
     }),
     city: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(35)],
     }),
     stateProvince: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(35)],
     }),
     phoneNumber: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(13), Validators.maxLength(13)],
+      validators: [Validators.required, Validators.minLength(0), Validators.maxLength(13)],
     }),
     password: new FormControl('', {
       nonNullable: true,
