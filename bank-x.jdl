@@ -1,0 +1,94 @@
+entity ProfileInfo {
+	@Id profileNumber String pattern(/^[A-Z]{6}\s\d{3}$/)
+}
+
+entity ClientInfo {
+	@Id idNumber String pattern(/^\d{13}$/)
+    firstName String required
+    lastName String required
+}
+
+entity Contact {
+	streetAddress String
+	postalCode String
+	city String
+	stateProvince String
+    email String
+	phoneNumber String pattern(/^0\d{9}$/)
+}
+
+enum AccountType {
+    SAVINGS, CURRENT
+}
+
+enum AccountStatus {
+    ACTIVE, CLOSED, ON_HOLD
+}
+
+entity AccountInfo {
+    accountNumber String required pattern(/^\d{10,15}$/)
+    accountType AccountType required
+    accountStatus AccountStatus required
+    accountBalance BigDecimal
+}
+
+entity ClientInbox {
+	message String maxlength(256)
+}
+
+entity BankInfo {
+	swiftCode String required
+	bankName String required
+}
+
+enum TransactionStatus {
+    PENDING, SUCCESSFUL, FAILED, CENCELLED
+}
+
+entity TransactionLog {
+	@Id uniqueTransactionId UUID
+	transactionTime Instant required
+	debtorAccount String required pattern(/^\d{10,15}$/)
+	creditorAccount String required pattern(/^\d{10,15}$/)
+    amount BigDecimal required
+    status TransactionStatus required
+}
+
+enum TransactionType {
+    DEBIT, CREDIT, REVERSAL
+}
+
+enum DebitCreditStatus {
+    ACCEPTED, INSUFFICIENT_FUNDS, INVALID_ACCOUNT, INVALID_ACCOUNT_STATUS
+}
+
+entity SessionLog {
+	transactionType TransactionType required
+    status DebitCreditStatus required
+}
+
+// defining relationships
+
+relationship OneToOne {
+	ClientInfo{contact} to Contact
+}
+
+relationship OneToMany {
+    ProfileInfo{clientInfo} to ClientInfo
+
+	ProfileInfo{accountInfo} to AccountInfo
+
+	ProfileInfo{clientInbox} to ClientInbox
+
+    TransactionLog{sessionLog} to SessionLog
+}
+
+// Set pagination options
+paginate ProfileInfo, TransactionLog, SessionLog with infinite-scroll
+paginate ClientInfo, ClientInbox, AccountInfo with pagination
+
+// Use Data Transfer Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
