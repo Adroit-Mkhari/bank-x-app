@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (clientInfo) {
+      <div>
+        <h2 data-cy="clientInfoDetailsHeading"><span>Client Info</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>Id Number</span></dt>
+          <dd>
+            <span>{{ clientInfo.idNumber }}</span>
+          </dd>
+          <dt><span>First Name</span></dt>
+          <dd>
+            <span>{{ clientInfo.firstName }}</span>
+          </dd>
+          <dt><span>Last Name</span></dt>
+          <dd>
+            <span>{{ clientInfo.lastName }}</span>
+          </dd>
+          <dt><span>Contact</span></dt>
+          <dd>
+            @if (clientInfo.contact) {
+              <div>
+                <a [routerLink]="['/contact', clientInfo.contact.id, 'view']">{{ clientInfo.contact.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span>Profile Info</span></dt>
+          <dd>
+            @if (clientInfo.profileInfo) {
+              <div>
+                <a [routerLink]="['/profile-info', clientInfo.profileInfo.profileNumber, 'view']">{{
+                  clientInfo.profileInfo.profileNumber
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/client-info', clientInfo.idNumber, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

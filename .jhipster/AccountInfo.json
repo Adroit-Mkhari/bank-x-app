@@ -1,0 +1,36 @@
+{
+  "annotations": {
+    "changelogDate": "20240201214010"
+  },
+  "applications": "*",
+  "entityTableName": "account_info",
+  "fields": [
+    {
+      "fieldName": "accountNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRulesPattern": "^\\d{10,15}$"
+    },
+    {
+      "fieldName": "accountType",
+      "fieldType": "AccountType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SAVINGS,CURRENT"
+    },
+    {
+      "fieldName": "accountStatus",
+      "fieldType": "AccountStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ACTIVE,CLOSED,ON_HOLD"
+    },
+    {
+      "fieldName": "accountBalance",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "name": "AccountInfo",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

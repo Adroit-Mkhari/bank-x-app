@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--
+        Added the constraints for entity ClientInfo.
+    -->
+    <changeSet id="20240201213810-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="contact_id"
+                                 baseTableName="client_info"
+                                 constraintName="fk_client_info__contact_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="contact"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="profile_info_profile_number"
+                                 baseTableName="client_info"
+                                 constraintName="fk_client_info__profile_info_id"
+                                 referencedColumnNames="profile_number"
+                                 referencedTableName="profile_info"
+                                 />
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "changelogDate": "20240201213710"
+  },
+  "applications": "*",
+  "entityTableName": "profile_info",
+  "fields": [
+    {
+      "fieldName": "profileNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["pattern"],
+      "fieldValidateRulesPattern": "^[A-Z]{6}\\s\\d{3}$",
+      "options": {
+        "id": true
+      }
+    },
+    {
+      "fieldName": "userId",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "ProfileInfo",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "clientInfo",
+      "relationshipName": "clientInfo",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "accountInfo",
+      "relationshipName": "accountInfo",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "clientInbox",
+      "relationshipName": "clientInbox",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

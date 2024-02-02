@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "changelogDate": "20240201214310"
+  },
+  "applications": "*",
+  "entityTableName": "transaction_log",
+  "fields": [
+    {
+      "fieldName": "transactionTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "uniqueTransactionId",
+      "fieldType": "UUID",
+      "options": {
+        "id": true
+      }
+    },
+    {
+      "fieldName": "debtorAccount",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRulesPattern": "^\\d{10,15}$"
+    },
+    {
+      "fieldName": "creditorAccount",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRulesPattern": "^\\d{10,15}$"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "TransactionStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,SUCCESSFUL,FAILED,CANCELED"
+    }
+  ],
+  "name": "TransactionLog",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "sessionLog",
+      "relationshipName": "sessionLog",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

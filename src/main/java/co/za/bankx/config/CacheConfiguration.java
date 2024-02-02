@@ -48,6 +48,18 @@ public class CacheConfiguration {
             createCache(cm, co.za.bankx.domain.User.class.getName());
             createCache(cm, co.za.bankx.domain.Authority.class.getName());
             createCache(cm, co.za.bankx.domain.User.class.getName() + ".authorities");
+            createCache(cm, co.za.bankx.domain.ProfileInfo.class.getName());
+            createCache(cm, co.za.bankx.domain.ProfileInfo.class.getName() + ".clientInfos");
+            createCache(cm, co.za.bankx.domain.ProfileInfo.class.getName() + ".accountInfos");
+            createCache(cm, co.za.bankx.domain.ProfileInfo.class.getName() + ".clientInboxes");
+            createCache(cm, co.za.bankx.domain.ClientInfo.class.getName());
+            createCache(cm, co.za.bankx.domain.Contact.class.getName());
+            createCache(cm, co.za.bankx.domain.AccountInfo.class.getName());
+            createCache(cm, co.za.bankx.domain.ClientInbox.class.getName());
+            createCache(cm, co.za.bankx.domain.BankInfo.class.getName());
+            createCache(cm, co.za.bankx.domain.TransactionLog.class.getName());
+            createCache(cm, co.za.bankx.domain.TransactionLog.class.getName() + ".sessionLogs");
+            createCache(cm, co.za.bankx.domain.SessionLog.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

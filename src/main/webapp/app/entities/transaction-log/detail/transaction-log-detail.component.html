@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (transactionLog) {
+      <div>
+        <h2 data-cy="transactionLogDetailsHeading"><span>Transaction Log</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>Transaction Time</span></dt>
+          <dd>
+            <span>{{ transactionLog.transactionTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Unique Transaction Id</span></dt>
+          <dd>
+            <span>{{ transactionLog.uniqueTransactionId }}</span>
+          </dd>
+          <dt><span>Debtor Account</span></dt>
+          <dd>
+            <span>{{ transactionLog.debtorAccount }}</span>
+          </dd>
+          <dt><span>Creditor Account</span></dt>
+          <dd>
+            <span>{{ transactionLog.creditorAccount }}</span>
+          </dd>
+          <dt><span>Amount</span></dt>
+          <dd>
+            <span>{{ transactionLog.amount }}</span>
+          </dd>
+          <dt><span>Status</span></dt>
+          <dd>
+            <span>{{ transactionLog.status }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/transaction-log', transactionLog.uniqueTransactionId, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

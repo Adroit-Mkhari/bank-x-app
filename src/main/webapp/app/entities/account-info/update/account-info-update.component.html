@@ -1,0 +1,125 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-account-info-heading" data-cy="AccountInfoCreateUpdateHeading">Create or edit a Account Info</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_accountNumber">Account Number</label>
+          <input
+            type="text"
+            class="form-control"
+            name="accountNumber"
+            id="field_accountNumber"
+            data-cy="accountNumber"
+            formControlName="accountNumber"
+          />
+          @if (editForm.get('accountNumber')!.invalid && (editForm.get('accountNumber')!.dirty || editForm.get('accountNumber')!.touched)) {
+            <div>
+              @if (editForm.get('accountNumber')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              @if (editForm.get('accountNumber')?.errors?.pattern) {
+                <small class="form-text text-danger">This field should follow pattern for Account Number.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_accountType">Account Type</label>
+          <select class="form-control" name="accountType" formControlName="accountType" id="field_accountType" data-cy="accountType">
+            <option [ngValue]="null"></option>
+            @for (accountType of accountTypeValues; track $index) {
+              <option [value]="accountType">{{ accountType }}</option>
+            }
+          </select>
+          @if (editForm.get('accountType')!.invalid && (editForm.get('accountType')!.dirty || editForm.get('accountType')!.touched)) {
+            <div>
+              @if (editForm.get('accountType')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_accountStatus">Account Status</label>
+          <select
+            class="form-control"
+            name="accountStatus"
+            formControlName="accountStatus"
+            id="field_accountStatus"
+            data-cy="accountStatus"
+          >
+            <option [ngValue]="null"></option>
+            @for (accountStatus of accountStatusValues; track $index) {
+              <option [value]="accountStatus">{{ accountStatus }}</option>
+            }
+          </select>
+          @if (editForm.get('accountStatus')!.invalid && (editForm.get('accountStatus')!.dirty || editForm.get('accountStatus')!.touched)) {
+            <div>
+              @if (editForm.get('accountStatus')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_accountBalance">Account Balance</label>
+          <input
+            type="number"
+            class="form-control"
+            name="accountBalance"
+            id="field_accountBalance"
+            data-cy="accountBalance"
+            formControlName="accountBalance"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_profileInfo">Profile Info</label>
+          <select
+            class="form-control"
+            id="field_profileInfo"
+            data-cy="profileInfo"
+            name="profileInfo"
+            formControlName="profileInfo"
+            [compareWith]="compareProfileInfo"
+          >
+            <option [ngValue]="null"></option>
+            @for (profileInfoOption of profileInfosSharedCollection; track $index) {
+              <option [ngValue]="profileInfoOption">{{ profileInfoOption.profileNumber }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

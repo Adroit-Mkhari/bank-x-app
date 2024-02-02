@@ -1,0 +1,23 @@
+{
+  "annotations": {
+    "changelogDate": "20240201214210"
+  },
+  "applications": "*",
+  "entityTableName": "bank_info",
+  "fields": [
+    {
+      "fieldName": "swiftCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "bankName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "BankInfo",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

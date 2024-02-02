@@ -1,0 +1,20 @@
+{
+  "annotations": {
+    "changelogDate": "20240201214110"
+  },
+  "applications": "*",
+  "entityTableName": "client_inbox",
+  "fields": [
+    {
+      "fieldName": "message",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "256"
+    }
+  ],
+  "name": "ClientInbox",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

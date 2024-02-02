@@ -1,0 +1,145 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-transaction-log-heading" data-cy="TransactionLogCreateUpdateHeading">Create or edit a Transaction Log</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_transactionTime">Transaction Time</label>
+          <div class="d-flex">
+            <input
+              id="field_transactionTime"
+              data-cy="transactionTime"
+              type="datetime-local"
+              class="form-control"
+              name="transactionTime"
+              formControlName="transactionTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (
+            editForm.get('transactionTime')!.invalid && (editForm.get('transactionTime')!.dirty || editForm.get('transactionTime')!.touched)
+          ) {
+            <div>
+              @if (editForm.get('transactionTime')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('transactionTime')?.errors?.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        @if (editForm.controls.uniqueTransactionId.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_uniqueTransactionId">Unique Transaction Id</label>
+            <input
+              type="text"
+              class="form-control"
+              name="uniqueTransactionId"
+              id="field_uniqueTransactionId"
+              data-cy="uniqueTransactionId"
+              formControlName="uniqueTransactionId"
+              [readonly]="true"
+            />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_debtorAccount">Debtor Account</label>
+          <input
+            type="text"
+            class="form-control"
+            name="debtorAccount"
+            id="field_debtorAccount"
+            data-cy="debtorAccount"
+            formControlName="debtorAccount"
+          />
+          @if (editForm.get('debtorAccount')!.invalid && (editForm.get('debtorAccount')!.dirty || editForm.get('debtorAccount')!.touched)) {
+            <div>
+              @if (editForm.get('debtorAccount')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              @if (editForm.get('debtorAccount')?.errors?.pattern) {
+                <small class="form-text text-danger">This field should follow pattern for Debtor Account.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_creditorAccount">Creditor Account</label>
+          <input
+            type="text"
+            class="form-control"
+            name="creditorAccount"
+            id="field_creditorAccount"
+            data-cy="creditorAccount"
+            formControlName="creditorAccount"
+          />
+          @if (
+            editForm.get('creditorAccount')!.invalid && (editForm.get('creditorAccount')!.dirty || editForm.get('creditorAccount')!.touched)
+          ) {
+            <div>
+              @if (editForm.get('creditorAccount')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              @if (editForm.get('creditorAccount')?.errors?.pattern) {
+                <small class="form-text text-danger">This field should follow pattern for Creditor Account.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_amount">Amount</label>
+          <input type="number" class="form-control" name="amount" id="field_amount" data-cy="amount" formControlName="amount" />
+          @if (editForm.get('amount')!.invalid && (editForm.get('amount')!.dirty || editForm.get('amount')!.touched)) {
+            <div>
+              @if (editForm.get('amount')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('amount')?.errors?.number">This field should be a number.</small>
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null"></option>
+            @for (transactionStatus of transactionStatusValues; track $index) {
+              <option [value]="transactionStatus">{{ transactionStatus }}</option>
+            }
+          </select>
+          @if (editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

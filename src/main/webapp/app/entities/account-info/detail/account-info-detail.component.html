@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (accountInfo) {
+      <div>
+        <h2 data-cy="accountInfoDetailsHeading"><span>Account Info</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ accountInfo.id }}</span>
+          </dd>
+          <dt><span>Account Number</span></dt>
+          <dd>
+            <span>{{ accountInfo.accountNumber }}</span>
+          </dd>
+          <dt><span>Account Type</span></dt>
+          <dd>
+            <span>{{ accountInfo.accountType }}</span>
+          </dd>
+          <dt><span>Account Status</span></dt>
+          <dd>
+            <span>{{ accountInfo.accountStatus }}</span>
+          </dd>
+          <dt><span>Account Balance</span></dt>
+          <dd>
+            <span>{{ accountInfo.accountBalance }}</span>
+          </dd>
+          <dt><span>Profile Info</span></dt>
+          <dd>
+            @if (accountInfo.profileInfo) {
+              <div>
+                <a [routerLink]="['/profile-info', accountInfo.profileInfo.profileNumber, 'view']">{{
+                  accountInfo.profileInfo.profileNumber
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/account-info', accountInfo.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

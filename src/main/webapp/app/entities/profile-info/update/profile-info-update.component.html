@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-profile-info-heading" data-cy="ProfileInfoCreateUpdateHeading">Create or edit a Profile Info</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_profileNumber">Profile Number</label>
+          <input
+            type="text"
+            class="form-control"
+            name="profileNumber"
+            id="field_profileNumber"
+            data-cy="profileNumber"
+            formControlName="profileNumber"
+            [readonly]="editForm.get('profileNumber')!.value != null"
+          />
+          @if (editForm.get('profileNumber')!.invalid && (editForm.get('profileNumber')!.dirty || editForm.get('profileNumber')!.touched)) {
+            <div>
+              @if (editForm.get('profileNumber')?.errors?.pattern) {
+                <small class="form-text text-danger">This field should follow pattern for Profile Number.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_userId">User Id</label>
+          <input type="number" class="form-control" name="userId" id="field_userId" data-cy="userId" formControlName="userId" />
+          @if (editForm.get('userId')!.invalid && (editForm.get('userId')!.dirty || editForm.get('userId')!.touched)) {
+            <div>
+              @if (editForm.get('userId')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('userId')?.errors?.number">This field should be a number.</small>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

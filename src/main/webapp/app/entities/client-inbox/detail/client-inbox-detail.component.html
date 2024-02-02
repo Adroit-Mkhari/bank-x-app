@@ -1,0 +1,44 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (clientInbox) {
+      <div>
+        <h2 data-cy="clientInboxDetailsHeading"><span>Client Inbox</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ clientInbox.id }}</span>
+          </dd>
+          <dt><span>Message</span></dt>
+          <dd>
+            <span>{{ clientInbox.message }}</span>
+          </dd>
+          <dt><span>Profile Info</span></dt>
+          <dd>
+            @if (clientInbox.profileInfo) {
+              <div>
+                <a [routerLink]="['/profile-info', clientInbox.profileInfo.profileNumber, 'view']">{{
+                  clientInbox.profileInfo.profileNumber
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/client-inbox', clientInbox.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

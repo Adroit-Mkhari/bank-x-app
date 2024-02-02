@@ -1,0 +1,26 @@
+{
+  "annotations": {
+    "changelogDate": "20240201214410"
+  },
+  "applications": "*",
+  "entityTableName": "session_log",
+  "fields": [
+    {
+      "fieldName": "transactionType",
+      "fieldType": "TransactionType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DEBIT,CREDIT,REVERSAL"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "DebitCreditStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ACCEPTED,INSUFFICIENT_FUNDS,INVALID_ACCOUNT,INVALID_ACCOUNT_STATUS"
+    }
+  ],
+  "name": "SessionLog",
+  "pagination": "infinite-scroll",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (sessionLog) {
+      <div>
+        <h2 data-cy="sessionLogDetailsHeading"><span>Session Log</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ sessionLog.id }}</span>
+          </dd>
+          <dt><span>Transaction Type</span></dt>
+          <dd>
+            <span>{{ sessionLog.transactionType }}</span>
+          </dd>
+          <dt><span>Status</span></dt>
+          <dd>
+            <span>{{ sessionLog.status }}</span>
+          </dd>
+          <dt><span>Transaction Log</span></dt>
+          <dd>
+            @if (sessionLog.transactionLog) {
+              <div>
+                <a [routerLink]="['/transaction-log', sessionLog.transactionLog.uniqueTransactionId, 'view']">{{
+                  sessionLog.transactionLog.uniqueTransactionId
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/session-log', sessionLog.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

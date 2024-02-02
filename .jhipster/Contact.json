@@ -1,0 +1,39 @@
+{
+  "annotations": {
+    "changelogDate": "20240201213910"
+  },
+  "applications": "*",
+  "entityTableName": "contact",
+  "fields": [
+    {
+      "fieldName": "streetAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "postalCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "stateProvince",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["pattern"],
+      "fieldValidateRulesPattern": "^0\\d{9}$"
+    }
+  ],
+  "name": "Contact",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}
