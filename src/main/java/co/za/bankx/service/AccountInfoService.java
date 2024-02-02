@@ -55,4 +55,6 @@ public interface AccountInfoService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<AccountInfo> findOneByAccountNumber(String accountNumber);
 }

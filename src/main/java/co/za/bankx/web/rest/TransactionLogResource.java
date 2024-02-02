@@ -1,11 +1,18 @@
 package co.za.bankx.web.rest;
 
+import co.za.bankx.domain.SessionLog;
 import co.za.bankx.domain.TransactionLog;
+import co.za.bankx.domain.enumeration.DebitCreditStatus;
+import co.za.bankx.domain.enumeration.TransactionStatus;
+import co.za.bankx.domain.enumeration.TransactionType;
 import co.za.bankx.repository.TransactionLogRepository;
+import co.za.bankx.service.AccountInfoService;
+import co.za.bankx.service.SessionLogService;
 import co.za.bankx.service.TransactionLogService;
 import co.za.bankx.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -14,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +51,12 @@ public class TransactionLogResource {
 
     private final TransactionLogRepository transactionLogRepository;
 
+    @Autowired
+    private AccountInfoService accountInfoService;
+
+    @Autowired
+    private SessionLogService sessionLogService;
+
     public TransactionLogResource(TransactionLogService transactionLogService, TransactionLogRepository transactionLogRepository) {
         this.transactionLogService = transactionLogService;
         this.transactionLogRepository = transactionLogRepository;
@@ -62,7 +76,50 @@ public class TransactionLogResource {
         if (transactionLog.getUniqueTransactionId() != null) {
             throw new BadRequestAlertException("A new transactionLog cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        SessionLog sessionLogDebit = new SessionLog();
+        SessionLog sessionLogCredit = new SessionLog();
+
+        sessionLogDebit.setTransactionType(TransactionType.DEBIT);
+        sessionLogCredit.setTransactionType(TransactionType.CREDIT);
+
+        // TODO: Check Account Status Before Debit and Credit
+
+        accountInfoService
+            .findOneByAccountNumber(transactionLog.getCreditorAccount())
+            .ifPresent(accountInfo -> {
+                BigDecimal accountBalance = accountInfo.getAccountBalance();
+                if (accountBalance.compareTo(transactionLog.getAmount()) < 0) {
+                    transactionLog.setStatus(TransactionStatus.FAILED);
+                    sessionLogDebit.setStatus(DebitCreditStatus.INSUFFICIENT_FUNDS);
+                } else {
+                    accountInfo.setAccountBalance(accountBalance.subtract(transactionLog.getAmount()));
+                    transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
+                    sessionLogDebit.setStatus(DebitCreditStatus.ACCEPTED);
+                    accountInfoService.update(accountInfo);
+                }
+            });
+
+        if (transactionLog.getStatus().equals(TransactionStatus.SUCCESSFUL)) {
+            accountInfoService
+                .findOneByAccountNumber(transactionLog.getDebtorAccount())
+                .ifPresent(accountInfo -> {
+                    BigDecimal accountBalance = accountInfo.getAccountBalance();
+                    accountInfo.setAccountBalance(accountBalance.add(transactionLog.getAmount()));
+                    transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
+                    sessionLogCredit.setStatus(DebitCreditStatus.ACCEPTED);
+                    accountInfoService.update(accountInfo);
+                });
+        }
+
         TransactionLog result = transactionLogService.save(transactionLog);
+
+        sessionLogDebit.setTransactionLog(result);
+        sessionLogService.save(sessionLogDebit);
+
+        sessionLogCredit.setTransactionLog(result);
+        sessionLogService.save(sessionLogCredit);
+
         return ResponseEntity
             .created(new URI("/api/transaction-logs/" + result.getUniqueTransactionId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getUniqueTransactionId().toString()))
