@@ -97,7 +97,7 @@ public class AccountResource {
                 profileNumber = generateRandomProfileNumber();
             }
 
-            profileInfo.setProfileNumber(profileNumber); // TODO: Ensure that it matches pattern or regenerate
+            profileInfo.setProfileNumber(profileNumber);
             profileInfo.setUserId(user.getId());
             profileInfo = profileInfoService.save(profileInfo);
 
@@ -114,7 +114,7 @@ public class AccountResource {
             clientInfo.setProfileInfo(profileInfo);
             clientInfo.setFirstName(managedUserVM.getFirstName());
             clientInfo.setLastName(managedUserVM.getLastName());
-            clientInfo.setIdNumber(managedUserVM.getIdNumber()); // TODO: Check if ID number already exists in db
+            clientInfo.setIdNumber(managedUserVM.getIdNumber());
             clientInfo.setContact(contact);
 
             clientInfoService.save(clientInfo);
