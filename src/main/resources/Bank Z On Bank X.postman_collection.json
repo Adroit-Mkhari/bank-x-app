@@ -1,0 +1,211 @@
+{
+  "info": {
+    "_postman_id": "aa7ac547-8716-45b7-ad7a-4bb7992867fe",
+    "name": "Bank Z On Bank X",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4002130"
+  },
+  "item": [
+    {
+      "name": "BatchPayments",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n  {\r\n    \"transactionTime\": null,\r\n    \"uniqueTransactionId\": null,\r\n    \"debtorAccount\": \"2612832945\",\r\n    \"creditorAccount\": \"9809284542\",\r\n    \"amount\": 5.06,\r\n    \"status\": \"PENDING\",\r\n    \"sessionLogs\": null\r\n  },\r\n  {\r\n    \"transactionTime\": null,\r\n    \"uniqueTransactionId\": null,\r\n    \"debtorAccount\": \"2612832945\",\r\n    \"creditorAccount\": \"9809284542\",\r\n    \"amount\": 5.07,\r\n    \"status\": \"PENDING\",\r\n    \"sessionLogs\": null\r\n  },\r\n  {\r\n    \"transactionTime\": \"2024-02-03T08:06:13.963Z\",\r\n    \"uniqueTransactionId\": null,\r\n    \"debtorAccount\": \"2612832945\",\r\n    \"creditorAccount\": \"9809284542\",\r\n    \"amount\": 5.08,\r\n    \"status\": \"PENDING\",\r\n    \"sessionLogs\": null\r\n  }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs/batch",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs", "batch"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SinglePayment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"transactionTime\": null,\r\n    \"uniqueTransactionId\": null,\r\n    \"debtorAccount\": \"2612832945\",\r\n    \"creditorAccount\": \"9809284542\",\r\n    \"amount\": 5.09,\r\n    \"status\": \"PENDING\",\r\n    \"sessionLogs\": null\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transfer",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"transactionTime\": null,\r\n    \"uniqueTransactionId\": null,\r\n    \"debtorAccount\": \"2612832945\",\r\n    \"creditorAccount\": \"9809284542\",\r\n    \"amount\": 5.09,\r\n    \"status\": \"PENDING\",\r\n    \"sessionLogs\": null\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs/transfer",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs", "transfer"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transaction Log",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs/275f46bd-1a43-40fe-af8b-3d7a98dc6348",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs", "275f46bd-1a43-40fe-af8b-3d7a98dc6348"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Transaction Logs",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AccointInfo",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTcwNzAzMjAxNCwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzA2OTQ1NjE0fQ.qjoxKbR8igLaF6NihAP74gS14dRV14azk8w__tQpghit20r-ma-IjegPbp-uoH_0f-r-Q4fdv0UABLfz9IW1LA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transaction-logs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transaction-logs"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
