@@ -2,9 +2,7 @@ package co.za.bankx.web.rest;
 
 import co.za.bankx.domain.SessionLog;
 import co.za.bankx.domain.TransactionLog;
-import co.za.bankx.domain.enumeration.DebitCreditStatus;
-import co.za.bankx.domain.enumeration.TransactionStatus;
-import co.za.bankx.domain.enumeration.TransactionType;
+import co.za.bankx.domain.enumeration.*;
 import co.za.bankx.repository.TransactionLogRepository;
 import co.za.bankx.service.AccountInfoService;
 import co.za.bankx.service.SessionLogService;
@@ -77,39 +75,77 @@ public class TransactionLogResource {
             throw new BadRequestAlertException("A new transactionLog cannot already have an ID", ENTITY_NAME, "idexists");
         }
 
+        TransactionLog result = processTransactionLog(transactionLog, false);
+
+        return ResponseEntity
+            .created(new URI("/api/transaction-logs/" + result.getUniqueTransactionId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getUniqueTransactionId().toString()))
+            .body(result);
+    }
+
+    private TransactionLog processTransactionLog(TransactionLog transactionLog, boolean isTransfer) {
         SessionLog sessionLogDebit = new SessionLog();
         SessionLog sessionLogCredit = new SessionLog();
 
         sessionLogDebit.setTransactionType(TransactionType.DEBIT);
         sessionLogCredit.setTransactionType(TransactionType.CREDIT);
 
-        // TODO: Check Account Status Before Debit and Credit
+        // TODO: Link User Account
+        // TODO: Apply Charges on Payments
 
         accountInfoService
             .findOneByAccountNumber(transactionLog.getCreditorAccount())
             .ifPresent(accountInfo -> {
                 BigDecimal accountBalance = accountInfo.getAccountBalance();
-                if (accountBalance.compareTo(transactionLog.getAmount()) < 0) {
+                if (!isTransfer && accountInfo.getAccountType().equals(AccountType.SAVINGS)) {
                     transactionLog.setStatus(TransactionStatus.FAILED);
-                    sessionLogDebit.setStatus(DebitCreditStatus.INSUFFICIENT_FUNDS);
+                    sessionLogDebit.setStatus(DebitCreditStatus.INVALID_ACCOUNT);
                 } else {
-                    accountInfo.setAccountBalance(accountBalance.subtract(transactionLog.getAmount()));
-                    transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
-                    sessionLogDebit.setStatus(DebitCreditStatus.ACCEPTED);
-                    accountInfoService.update(accountInfo);
+                    if (accountBalance.compareTo(transactionLog.getAmount()) < 0) {
+                        transactionLog.setStatus(TransactionStatus.FAILED);
+                        sessionLogDebit.setStatus(DebitCreditStatus.INSUFFICIENT_FUNDS);
+                    } else {
+                        if (accountInfo.getAccountStatus().equals(AccountStatus.ACTIVE)) {
+                            if (!isTransfer) {
+                                // TODO: Apply Payment Charge
+                            }
+
+                            accountInfo.setAccountBalance(accountBalance.subtract(transactionLog.getAmount()));
+                            transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
+                            sessionLogDebit.setStatus(DebitCreditStatus.ACCEPTED);
+                            accountInfoService.update(accountInfo);
+                        } else {
+                            transactionLog.setStatus(TransactionStatus.FAILED);
+                            sessionLogDebit.setStatus(DebitCreditStatus.INVALID_ACCOUNT_STATUS);
+                        }
+                    }
                 }
             });
 
-        if (transactionLog.getStatus().equals(TransactionStatus.SUCCESSFUL)) {
+        if (transactionLog.getStatus() != null && transactionLog.getStatus().equals(TransactionStatus.SUCCESSFUL)) {
             accountInfoService
                 .findOneByAccountNumber(transactionLog.getDebtorAccount())
                 .ifPresent(accountInfo -> {
-                    BigDecimal accountBalance = accountInfo.getAccountBalance();
-                    accountInfo.setAccountBalance(accountBalance.add(transactionLog.getAmount()));
-                    transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
-                    sessionLogCredit.setStatus(DebitCreditStatus.ACCEPTED);
-                    accountInfoService.update(accountInfo);
+                    if (accountInfo.getAccountStatus().equals(AccountStatus.ACTIVE)) {
+                        BigDecimal accountBalance = accountInfo.getAccountBalance();
+
+                        if (!isTransfer) {
+                            // TODO: Apply Payment Charge
+                        }
+
+                        accountInfo.setAccountBalance(accountBalance.add(transactionLog.getAmount()));
+                        transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
+                        sessionLogCredit.setStatus(DebitCreditStatus.ACCEPTED);
+                        accountInfoService.update(accountInfo);
+                    } else {
+                        transactionLog.setStatus(TransactionStatus.FAILED);
+                        sessionLogCredit.setStatus(DebitCreditStatus.INVALID_ACCOUNT_STATUS);
+                    }
                 });
+        } else {
+            if (sessionLogDebit.getStatus() == null) {
+                sessionLogDebit.setStatus(DebitCreditStatus.INVALID_ACCOUNT);
+            }
         }
 
         TransactionLog result = transactionLogService.save(transactionLog);
@@ -117,13 +153,17 @@ public class TransactionLogResource {
         sessionLogDebit.setTransactionLog(result);
         sessionLogService.save(sessionLogDebit);
 
-        sessionLogCredit.setTransactionLog(result);
-        sessionLogService.save(sessionLogCredit);
+        if (!transactionLog.getStatus().equals(TransactionStatus.SUCCESSFUL)) {
+            if (sessionLogCredit.getStatus() == null) {
+                sessionLogCredit.setStatus(DebitCreditStatus.INVALID_ACCOUNT);
+            }
+        }
 
-        return ResponseEntity
-            .created(new URI("/api/transaction-logs/" + result.getUniqueTransactionId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getUniqueTransactionId().toString()))
-            .body(result);
+        if (sessionLogDebit.getStatus() != null && sessionLogDebit.getStatus().equals(DebitCreditStatus.ACCEPTED)) {
+            sessionLogCredit.setTransactionLog(result);
+            sessionLogService.save(sessionLogCredit);
+        }
+        return result;
     }
 
     /**

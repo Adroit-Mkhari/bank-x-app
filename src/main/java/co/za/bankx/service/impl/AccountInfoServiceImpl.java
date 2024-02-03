@@ -82,4 +82,10 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         log.debug("Request to delete AccountInfo : {}", id);
         accountInfoRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<AccountInfo> findOneByAccountNumber(String accountNumber) {
+        return accountInfoRepository.findOneByAccountNumber(accountNumber);
+    }
 }
