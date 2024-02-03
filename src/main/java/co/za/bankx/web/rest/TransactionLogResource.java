@@ -236,7 +236,15 @@ public class TransactionLogResource {
         }
 
         ClientInbox clientInbox = new ClientInbox();
-        clientInbox.setMessage(transactionLog.getStatus() + ": Payment Of " + transactionLog.getAmount() + " Amount Was Made From Account");
+        clientInbox.setMessage(
+            transactionLog.getStatus() +
+            ": Payment Of " +
+            transactionLog.getAmount() +
+            " Amount Was Made From Account " +
+            transactionLog.getCreditorAccount() +
+            " To " +
+            transactionLog.getDebtorAccount()
+        );
         clientInboxService.save(clientInbox);
 
         return result;
