@@ -42,6 +42,13 @@ export class TransactionLogService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
+  transfer(transactionLog: NewTransactionLog): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(transactionLog);
+    return this.http
+      .post<RestTransactionLog>(`${this.resourceUrl}/transfer`, copy, { observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
+  }
+
   update(transactionLog: ITransactionLog): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(transactionLog);
     return this.http

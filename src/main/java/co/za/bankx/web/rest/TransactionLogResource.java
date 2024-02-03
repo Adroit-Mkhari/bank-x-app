@@ -70,12 +70,28 @@ public class TransactionLogResource {
     @PostMapping("")
     public ResponseEntity<TransactionLog> createTransactionLog(@Valid @RequestBody TransactionLog transactionLog)
         throws URISyntaxException {
-        log.debug("REST request to save TransactionLog : {}", transactionLog);
+        log.debug("REST request to save Payment TransactionLog : {}", transactionLog);
         if (transactionLog.getUniqueTransactionId() != null) {
-            throw new BadRequestAlertException("A new transactionLog cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new Payment transactionLog cannot already have an ID", ENTITY_NAME, "idexists");
         }
 
         TransactionLog result = processTransactionLog(transactionLog, false);
+
+        return ResponseEntity
+            .created(new URI("/api/transaction-logs/" + result.getUniqueTransactionId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getUniqueTransactionId().toString()))
+            .body(result);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransactionLog> transferTransactionLog(@Valid @RequestBody TransactionLog transactionLog)
+        throws URISyntaxException {
+        log.debug("REST request to save Transfer TransactionLog : {}", transactionLog);
+        if (transactionLog.getUniqueTransactionId() != null) {
+            throw new BadRequestAlertException("A new  Transfer transactionLog cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
+        TransactionLog result = processTransactionLog(transactionLog, true);
 
         return ResponseEntity
             .created(new URI("/api/transaction-logs/" + result.getUniqueTransactionId()))
@@ -156,6 +172,13 @@ public class TransactionLogResource {
         if (!transactionLog.getStatus().equals(TransactionStatus.SUCCESSFUL)) {
             if (sessionLogCredit.getStatus() == null) {
                 sessionLogCredit.setStatus(DebitCreditStatus.INVALID_ACCOUNT);
+                if (sessionLogDebit.getStatus() != null && sessionLogDebit.getStatus().equals(DebitCreditStatus.ACCEPTED)) {
+                    // TODO: Reverse Funds // TODO: Reverse Funds if debit was successful
+                }
+            } else if (sessionLogCredit.getStatus().equals(DebitCreditStatus.INVALID_ACCOUNT_STATUS)) {
+                if (sessionLogDebit.getStatus() != null && sessionLogDebit.getStatus().equals(DebitCreditStatus.ACCEPTED)) {
+                    // TODO: Reverse Funds // TODO: Reverse Funds if debit was successful
+                }
             }
         }
 

@@ -5,6 +5,7 @@ import { ASC } from 'app/config/navigation.constants';
 import { TransactionLogComponent } from './list/transaction-log.component';
 import { TransactionLogDetailComponent } from './detail/transaction-log-detail.component';
 import { TransactionLogUpdateComponent } from './update/transaction-log-update.component';
+import { TransactionLogTransferComponent } from './transfer/transaction-log-transfer.component';
 import TransactionLogResolve from './route/transaction-log-routing-resolve.service';
 
 const transactionLogRoute: Routes = [
@@ -27,6 +28,14 @@ const transactionLogRoute: Routes = [
   {
     path: 'new',
     component: TransactionLogUpdateComponent,
+    resolve: {
+      transactionLog: TransactionLogResolve,
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'transfer',
+    component: TransactionLogTransferComponent,
     resolve: {
       transactionLog: TransactionLogResolve,
     },
