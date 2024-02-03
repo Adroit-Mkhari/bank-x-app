@@ -164,6 +164,13 @@ public class AccountInfoResource {
         return ResponseUtil.wrapOrNotFound(accountInfo);
     }
 
+    @GetMapping("/account/{accountNumber}")
+    public ResponseEntity<AccountInfo> getAccountInfoByAccountNumber(@PathVariable("accountNumber") String accountNumber) {
+        log.debug("REST request to get AccountInfo : {}", accountNumber);
+        Optional<AccountInfo> accountInfo = accountInfoService.findOneByAccountNumber(accountNumber);
+        return ResponseUtil.wrapOrNotFound(accountInfo);
+    }
+
     /**
      * {@code DELETE  /account-infos/:id} : delete the "id" accountInfo.
      *

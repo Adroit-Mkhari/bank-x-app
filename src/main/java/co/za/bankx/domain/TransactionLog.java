@@ -24,7 +24,6 @@ public class TransactionLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
     @Column(name = "transaction_time", nullable = false)
     private Instant transactionTime;
 

@@ -1,10 +1,12 @@
 package co.za.bankx.web.rest;
 
+import co.za.bankx.domain.ClientInbox;
 import co.za.bankx.domain.SessionLog;
 import co.za.bankx.domain.TransactionLog;
 import co.za.bankx.domain.enumeration.*;
 import co.za.bankx.repository.TransactionLogRepository;
 import co.za.bankx.service.AccountInfoService;
+import co.za.bankx.service.ClientInboxService;
 import co.za.bankx.service.SessionLogService;
 import co.za.bankx.service.TransactionLogService;
 import co.za.bankx.web.rest.errors.BadRequestAlertException;
@@ -13,10 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +55,9 @@ public class TransactionLogResource {
     @Autowired
     private SessionLogService sessionLogService;
 
+    @Autowired
+    ClientInboxService clientInboxService;
+
     public TransactionLogResource(TransactionLogService transactionLogService, TransactionLogRepository transactionLogRepository) {
         this.transactionLogService = transactionLogService;
         this.transactionLogRepository = transactionLogRepository;
@@ -83,6 +86,24 @@ public class TransactionLogResource {
             .body(result);
     }
 
+    @PostMapping("batch")
+    public ResponseEntity<ArrayList<TransactionLog>> batchTransactionLog(@Valid @RequestBody List<TransactionLog> transactionLogs)
+        throws URISyntaxException {
+        log.debug("REST request to save Payment TransactionLog : {}", transactionLogs);
+
+        ArrayList<TransactionLog> results = new ArrayList<>();
+
+        for (TransactionLog transactionLog : transactionLogs) {
+            TransactionLog result = processTransactionLog(transactionLog, false);
+            results.add(result);
+        }
+
+        return ResponseEntity
+            .created(new URI("/api/transaction-logs"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, ""))
+            .body(results);
+    }
+
     @PostMapping("/transfer")
     public ResponseEntity<TransactionLog> transferTransactionLog(@Valid @RequestBody TransactionLog transactionLog)
         throws URISyntaxException {
@@ -100,14 +121,17 @@ public class TransactionLogResource {
     }
 
     private TransactionLog processTransactionLog(TransactionLog transactionLog, boolean isTransfer) {
+        if (transactionLog.getTransactionTime() == null) {
+            transactionLog.setTransactionTime(Instant.now());
+        }
+
         SessionLog sessionLogDebit = new SessionLog();
         SessionLog sessionLogCredit = new SessionLog();
 
         sessionLogDebit.setTransactionType(TransactionType.DEBIT);
         sessionLogCredit.setTransactionType(TransactionType.CREDIT);
 
-        // TODO: Link User Account
-        // TODO: Apply Charges on Payments
+        // TODO: Link User Account Logic ???
 
         accountInfoService
             .findOneByAccountNumber(transactionLog.getCreditorAccount())
@@ -122,11 +146,28 @@ public class TransactionLogResource {
                         sessionLogDebit.setStatus(DebitCreditStatus.INSUFFICIENT_FUNDS);
                     } else {
                         if (accountInfo.getAccountStatus().equals(AccountStatus.ACTIVE)) {
-                            if (!isTransfer) {
-                                // TODO: Apply Payment Charge
+                            if (isTransfer) {
+                                accountInfo.setAccountBalance(accountBalance.subtract(transactionLog.getAmount()));
+                            } else {
+                                // Check if the other account exists before debiting
+                                accountInfoService
+                                    .findOneByAccountNumber(transactionLog.getDebtorAccount())
+                                    .ifPresent(accountTwo -> {
+                                        if (
+                                            accountInfo.getAccountStatus() != null &&
+                                            accountTwo.getAccountStatus().equals(AccountStatus.ACTIVE)
+                                        ) {
+                                            BigDecimal depositPlusCharge = transactionLog
+                                                .getAmount()
+                                                .add(
+                                                    transactionLog.getAmount().multiply(new BigDecimal("0.05")).divide(new BigDecimal(100))
+                                                );
+
+                                            accountInfo.setAccountBalance(accountBalance.subtract(depositPlusCharge));
+                                        }
+                                    });
                             }
 
-                            accountInfo.setAccountBalance(accountBalance.subtract(transactionLog.getAmount()));
                             transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
                             sessionLogDebit.setStatus(DebitCreditStatus.ACCEPTED);
                             accountInfoService.update(accountInfo);
@@ -144,12 +185,17 @@ public class TransactionLogResource {
                 .ifPresent(accountInfo -> {
                     if (accountInfo.getAccountStatus().equals(AccountStatus.ACTIVE)) {
                         BigDecimal accountBalance = accountInfo.getAccountBalance();
+                        accountInfo.setAccountBalance(accountBalance.add(transactionLog.getAmount()));
 
                         if (!isTransfer) {
-                            // TODO: Apply Payment Charge
+                            accountBalance =
+                                accountInfo
+                                    .getAccountBalance()
+                                    .add(accountBalance.multiply(new BigDecimal("0.5")).divide(new BigDecimal(100)));
+
+                            accountInfo.setAccountBalance(accountBalance);
                         }
 
-                        accountInfo.setAccountBalance(accountBalance.add(transactionLog.getAmount()));
                         transactionLog.setStatus(TransactionStatus.SUCCESSFUL);
                         sessionLogCredit.setStatus(DebitCreditStatus.ACCEPTED);
                         accountInfoService.update(accountInfo);
@@ -173,11 +219,13 @@ public class TransactionLogResource {
             if (sessionLogCredit.getStatus() == null) {
                 sessionLogCredit.setStatus(DebitCreditStatus.INVALID_ACCOUNT);
                 if (sessionLogDebit.getStatus() != null && sessionLogDebit.getStatus().equals(DebitCreditStatus.ACCEPTED)) {
-                    // TODO: Reverse Funds // TODO: Reverse Funds if debit was successful
+                    // TODO: Reverse Funds if debit was successful
+                    // Not needed for now since I check first before
                 }
             } else if (sessionLogCredit.getStatus().equals(DebitCreditStatus.INVALID_ACCOUNT_STATUS)) {
                 if (sessionLogDebit.getStatus() != null && sessionLogDebit.getStatus().equals(DebitCreditStatus.ACCEPTED)) {
-                    // TODO: Reverse Funds // TODO: Reverse Funds if debit was successful
+                    // TODO: Reverse Funds if debit was successful
+                    // Not needed for now since I check first before
                 }
             }
         }
@@ -186,6 +234,11 @@ public class TransactionLogResource {
             sessionLogCredit.setTransactionLog(result);
             sessionLogService.save(sessionLogCredit);
         }
+
+        ClientInbox clientInbox = new ClientInbox();
+        clientInbox.setMessage(transactionLog.getStatus() + ": Payment Of " + transactionLog.getAmount() + " Amount Was Made From Account");
+        clientInboxService.save(clientInbox);
+
         return result;
     }
 

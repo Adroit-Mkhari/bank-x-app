@@ -144,7 +144,7 @@ public class AccountResource {
             AccountInfo currentAccount = new AccountInfo();
             currentAccount.setProfileInfo(profileInfo);
             currentAccount.setAccountNumber(generateRandomAccountNumber(12));
-            currentAccount.setAccountType(AccountType.SAVINGS);
+            currentAccount.setAccountType(AccountType.CURRENT);
             currentAccount.setAccountStatus(AccountStatus.ACTIVE);
             currentAccount.setAccountBalance(BigDecimal.valueOf(00.00));
             currentAccount = accountInfoService.save(currentAccount);
